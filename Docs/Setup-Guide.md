@@ -1,4 +1,5 @@
 # Setup Guide — Assignment Feedback Loop
+
 ## IPS Academy, Indore
 
 ---
@@ -58,6 +59,7 @@ Cloudinary returns a permanent URL for each page which is saved
 in the `submissions.file_urls` array in Supabase.
 
 These URLs are used in three places:
+
 - Faculty evaluation screen (to display the pages)
 - Gemini processing (to read the handwriting)
 - Student feedback view (to show annotated pages)
@@ -101,6 +103,7 @@ All environment variables are stored securely in the Vercel
 project dashboard and injected at build time.
 
 Vercel also handles:
+
 - HTTPS on the custom domain `afl.ipsacademy.org`
 - Serverless execution of all `/api` routes
 - Preview deployments for every pull request
@@ -112,9 +115,6 @@ NEXT_PUBLIC_APP_URL=
 ---
 
 ## Complete `.env.local` Template
-
-Copy this into `.env.local` at the root of your project
-and fill in each value before running the development server.
 
 ```env
 # ── Auth ──────────────────────────────────────
