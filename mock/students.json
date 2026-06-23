@@ -1,0 +1,167 @@
+[
+  {
+    "computerCode": "0901CS211001",
+    "enrollmentNumber": "EN2021001",
+    "fullName": "Rahul Kumar",
+    "branch": "Computer Science",
+    "subBranch": "CS - Artificial Intelligence",
+    "section": 1,
+    "year": 3,
+    "semester": 6,
+    "isActive": true
+  },
+  {
+    "computerCode": "0901CS211002",
+    "enrollmentNumber": "EN2021002",
+    "fullName": "Priya Singh",
+    "branch": "Computer Science",
+    "subBranch": "CS - Artificial Intelligence",
+    "section": 1,
+    "year": 3,
+    "semester": 6,
+    "isActive": true
+  },
+  {
+    "computerCode": "0901CS211003",
+    "enrollmentNumber": "EN2021003",
+    "fullName": "Arjun Sharma",
+    "branch": "Computer Science",
+    "subBranch": "CS - Artificial Intelligence",
+    "section": 2,
+    "year": 3,
+    "semester": 6,
+    "isActive": true
+  },
+  {
+    "computerCode": "0901CS221004",
+    "enrollmentNumber": "EN2022004",
+    "fullName": "Neha Patel",
+    "branch": "Computer Science",
+    "subBranch": "CS - Data Science",
+    "section": 1,
+    "year": 2,
+    "semester": 4,
+    "isActive": true
+  },
+  {
+    "computerCode": "0901CS221005",
+    "enrollmentNumber": "EN2022005",
+    "fullName": "Vikram Yadav",
+    "branch": "Computer Science",
+    "subBranch": "CS - Data Science",
+    "section": 2,
+    "year": 2,
+    "semester": 4,
+    "isActive": true
+  },
+  {
+    "computerCode": "0901CS231006",
+    "enrollmentNumber": "EN2023006",
+    "fullName": "Anjali Verma",
+    "branch": "Computer Science",
+    "subBranch": "CS - Cyber Security",
+    "section": 1,
+    "year": 1,
+    "semester": 2,
+    "isActive": true
+  },
+  {
+    "computerCode": "0901EC211007",
+    "enrollmentNumber": "EN2021007",
+    "fullName": "Rohan Gupta",
+    "branch": "Electronics & Communication",
+    "subBranch": "EC - VLSI Design",
+    "section": 1,
+    "year": 3,
+    "semester": 6,
+    "isActive": true
+  },
+  {
+    "computerCode": "0901EC221008",
+    "enrollmentNumber": "EN2022008",
+    "fullName": "Sneha Joshi",
+    "branch": "Electronics & Communication",
+    "subBranch": "EC - Embedded Systems",
+    "section": 1,
+    "year": 2,
+    "semester": 4,
+    "isActive": true
+  },
+  {
+    "computerCode": "0901ME211009",
+    "enrollmentNumber": "EN2021009",
+    "fullName": "Amit Tiwari",
+    "branch": "Mechanical Engineering",
+    "subBranch": "ME - Thermal Engineering",
+    "section": 1,
+    "year": 3,
+    "semester": 6,
+    "isActive": true
+  },
+  {
+    "computerCode": "0901ME221010",
+    "enrollmentNumber": "EN2022010",
+    "fullName": "Pooja Dubey",
+    "branch": "Mechanical Engineering",
+    "subBranch": "ME - Thermal Engineering",
+    "section": 2,
+    "year": 2,
+    "semester": 4,
+    "isActive": true
+  },
+  {
+    "computerCode": "0901CE211011",
+    "enrollmentNumber": "EN2021011",
+    "fullName": "Karan Malhotra",
+    "branch": "Civil Engineering",
+    "subBranch": "CE - Structural Engineering",
+    "section": 1,
+    "year": 3,
+    "semester": 6,
+    "isActive": true
+  },
+  {
+    "computerCode": "0901IT221012",
+    "enrollmentNumber": "EN2022012",
+    "fullName": "Riya Saxena",
+    "branch": "Information Technology",
+    "subBranch": "IT - Web Technologies",
+    "section": 1,
+    "year": 2,
+    "semester": 4,
+    "isActive": true
+  },
+  {
+    "computerCode": "0901EE211013",
+    "enrollmentNumber": "EN2021013",
+    "fullName": "Suresh Rawat",
+    "branch": "Electrical Engineering",
+    "subBranch": "EE - Power Systems",
+    "section": 1,
+    "year": 3,
+    "semester": 6,
+    "isActive": true
+  },
+  {
+    "computerCode": "0901CS231014",
+    "enrollmentNumber": "EN2023014",
+    "fullName": "Divya Chouhan",
+    "branch": "Computer Science",
+    "subBranch": "CS - Artificial Intelligence",
+    "section": 3,
+    "year": 1,
+    "semester": 2,
+    "isActive": true
+  },
+  {
+    "computerCode": "0901CS211015",
+    "enrollmentNumber": "EN2021015",
+    "fullName": "Mohit Bansal",
+    "branch": "Computer Science",
+    "subBranch": "CS - Artificial Intelligence",
+    "section": 2,
+    "year": 3,
+    "semester": 6,
+    "isActive": false
+  }
+]
