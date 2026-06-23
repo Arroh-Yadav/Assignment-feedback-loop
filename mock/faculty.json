@@ -1,0 +1,92 @@
+[
+  {
+    "employeeId": "FAC001",
+    "instituteEmail": "priya.sharma@ipsacademy.org",
+    "fullName": "Dr. Priya Sharma",
+    "branch": "Computer Science",
+    "subBranch": "CS - Artificial Intelligence",
+    "designation": "Associate Professor",
+    "isActive": true
+  },
+  {
+    "employeeId": "FAC002",
+    "instituteEmail": "rajesh.verma@ipsacademy.org",
+    "fullName": "Prof. Rajesh Verma",
+    "branch": "Computer Science",
+    "subBranch": "CS - Data Science",
+    "designation": "Assistant Professor",
+    "isActive": true
+  },
+  {
+    "employeeId": "FAC003",
+    "instituteEmail": "anita.joshi@ipsacademy.org",
+    "fullName": "Dr. Anita Joshi",
+    "branch": "Computer Science",
+    "subBranch": "CS - Cyber Security",
+    "designation": "Professor",
+    "isActive": true
+  },
+  {
+    "employeeId": "FAC004",
+    "instituteEmail": "sunil.gupta@ipsacademy.org",
+    "fullName": "Prof. Sunil Gupta",
+    "branch": "Electronics & Communication",
+    "subBranch": "EC - VLSI Design",
+    "designation": "Associate Professor",
+    "isActive": true
+  },
+  {
+    "employeeId": "FAC005",
+    "instituteEmail": "meena.patel@ipsacademy.org",
+    "fullName": "Dr. Meena Patel",
+    "branch": "Electronics & Communication",
+    "subBranch": "EC - Embedded Systems",
+    "designation": "Assistant Professor",
+    "isActive": true
+  },
+  {
+    "employeeId": "FAC006",
+    "instituteEmail": "vikash.tiwari@ipsacademy.org",
+    "fullName": "Prof. Vikash Tiwari",
+    "branch": "Mechanical Engineering",
+    "subBranch": "ME - Thermal Engineering",
+    "designation": "Associate Professor",
+    "isActive": true
+  },
+  {
+    "employeeId": "FAC007",
+    "instituteEmail": "sunita.rao@ipsacademy.org",
+    "fullName": "Dr. Sunita Rao",
+    "branch": "Civil Engineering",
+    "subBranch": "CE - Structural Engineering",
+    "designation": "Professor",
+    "isActive": true
+  },
+  {
+    "employeeId": "FAC008",
+    "instituteEmail": "amit.dubey@ipsacademy.org",
+    "fullName": "Prof. Amit Dubey",
+    "branch": "Information Technology",
+    "subBranch": "IT - Web Technologies",
+    "designation": "Assistant Professor",
+    "isActive": true
+  },
+  {
+    "employeeId": "FAC009",
+    "instituteEmail": "kavita.singh@ipsacademy.org",
+    "fullName": "Dr. Kavita Singh",
+    "branch": "Electrical Engineering",
+    "subBranch": "EE - Power Systems",
+    "designation": "Associate Professor",
+    "isActive": true
+  },
+  {
+    "employeeId": "ADMIN001",
+    "instituteEmail": "admin@ipsacademy.org",
+    "fullName": "System Administrator",
+    "branch": "Administration",
+    "subBranch": null,
+    "designation": "Admin",
+    "isActive": true
+  }
+]
