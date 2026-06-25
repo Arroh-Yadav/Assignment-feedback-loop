@@ -1,8 +1,192 @@
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
 generator client {
   provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ── Enums ─────────────────────────────────────
+
+enum UserRole {
+  STUDENT
+  FACULTY
+  ADMIN
+}
+
+enum AssignmentStatus {
+  DRAFT
+  ACTIVE
+  CLOSED
+}
+
+enum SubmissionStatus {
+  SUBMITTED
+  AI_PROCESSING
+  AI_DONE
+  UNDER_REVIEW
+  GRADED
+}
+
+enum EvaluationStatus {
+  IN_REVIEW
+  PUBLISHED
+}
+
+enum AnnotationType {
+  HIGHLIGHT
+  COMMENT
+  DRAWING
+}
+
+// ── Models ────────────────────────────────────
+
+model User {
+  id                     String    @id @default(uuid())
+  role                   UserRole
+  employeeOrComputerCode String
+  enrollmentOrEmail      String
+  isActive               Boolean   @default(true)
+  createdAt              DateTime  @default(now())
+  lastLogin              DateTime?
+  student                Student?
+  faculty                Faculty?
+}
+
+model Student {
+  id               String       @id @default(uuid())
+  userId           String       @unique
+  user             User         @relation(fields: [userId], references: [id])
+  fullName         String
+  enrollmentNumber String       @unique
+  computerCode     String       @unique
+  sectionId        String
+  section          Section      @relation(fields: [sectionId], references: [id])
+  year             Int
+  semester         Int
+  submissions      Submission[]
+}
+
+model Faculty {
+  id              String           @id @default(uuid())
+  userId          String           @unique
+  user            User             @relation(fields: [userId], references: [id])
+  fullName        String
+  employeeId      String           @unique
+  instituteEmail  String           @unique
+  branchId        String
+  branch          Branch           @relation(fields: [branchId], references: [id])
+  facultySections FacultySection[]
+  assignments     Assignment[]
+  evaluations     Evaluation[]
+}
+
+model Branch {
+  id          String      @id @default(uuid())
+  name        String
+  code        String      @unique
+  isActive    Boolean     @default(true)
+  subBranches SubBranch[]
+  faculty     Faculty[]
+}
+
+model SubBranch {
+  id       String    @id @default(uuid())
+  branchId String
+  branch   Branch    @relation(fields: [branchId], references: [id])
+  name     String
+  code     String    @unique
+  isActive Boolean   @default(true)
+  sections Section[]
+}
+
+model Section {
+  id              String           @id @default(uuid())
+  subBranchId     String
+  subBranch       SubBranch        @relation(fields: [subBranchId], references: [id])
+  sectionNumber   Int
+  year            Int
+  isActive        Boolean          @default(true)
+  students        Student[]
+  facultySections FacultySection[]
+  assignments     Assignment[]
+}
+
+model FacultySection {
+  id          String  @id @default(uuid())
+  facultyId   String
+  faculty     Faculty @relation(fields: [facultyId], references: [id])
+  sectionId   String
+  section     Section @relation(fields: [sectionId], references: [id])
+  subjectName String
+  subjectCode String
+}
+
+model Assignment {
+  id               String           @id @default(uuid())
+  facultyId        String
+  faculty          Faculty          @relation(fields: [facultyId], references: [id])
+  sectionId        String
+  section          Section          @relation(fields: [sectionId], references: [id])
+  title            String
+  description      String
+  subjectName      String
+  maxMarks         Int
+  deadline         DateTime
+  status           AssignmentStatus @default(DRAFT)
+  referenceFileUrl String?
+  createdAt        DateTime         @default(now())
+  submissions      Submission[]
+}
+
+model Submission {
+  id           String           @id @default(uuid())
+  assignmentId String
+  assignment   Assignment       @relation(fields: [assignmentId], references: [id])
+  studentId    String
+  student      Student          @relation(fields: [studentId], references: [id])
+  status       SubmissionStatus @default(SUBMITTED)
+  fileUrls     String[]
+  pageCount    Int
+  studentNote  String?
+  submittedAt  DateTime         @default(now())
+  aiFeedback   AIFeedback?
+  evaluation   Evaluation?
+}
+
+model AIFeedback {
+  id                 String     @id @default(uuid())
+  submissionId       String     @unique
+  submission         Submission @relation(fields: [submissionId], references: [id])
+  extractedText      Json
+  structuralAnalysis Json
+  feedbackItems      Json
+  suggestedMarks     Int
+  modelUsed          String
+  generatedAt        DateTime   @default(now())
+}
+
+model Evaluation {
+  id             String           @id @default(uuid())
+  submissionId   String           @unique
+  submission     Submission       @relation(fields: [submissionId], references: [id])
+  facultyId      String
+  faculty        Faculty          @relation(fields: [facultyId], references: [id])
+  finalMarks     Int
+  facultyRemarks String
+  status         EvaluationStatus @default(IN_REVIEW)
+  evaluatedAt    DateTime         @default(now())
+  publishedAt    DateTime?
+  annotations    Annotation[]
+}
+
+model Annotation {
+  id           String         @id @default(uuid())
+  evaluationId String
+  evaluation   Evaluation     @relation(fields: [evaluationId], references: [id])
+  pageNumber   Int
+  type         AnnotationType
+  coordinates  Json
+  content      String
+  createdAt    DateTime       @default(now())
 }
