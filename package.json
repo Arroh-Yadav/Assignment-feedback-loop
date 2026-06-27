@@ -22,7 +22,8 @@
     "pg": "^8.22.0",
     "react": "^18",
     "react-dom": "^18",
-    "recharts": "^3.9.0"
+    "recharts": "^3.9.0",
+    "uuid": "^14.0.1"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.10",
@@ -30,6 +31,7 @@
     "@types/pg": "^8.20.0",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/uuid": "^10.0.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.35",
     "postcss": "^8",
