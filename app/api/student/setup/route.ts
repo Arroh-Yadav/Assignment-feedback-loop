@@ -83,11 +83,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Create Student profile
-    // NOTE: fullName is a known placeholder — fix before Phase 2
     const student = await prisma.student.create({
       data: {
         userId: session.userId,
-        fullName: fullName || user.enrollmentOrEmail, // 🚩 known issue — replace with real name from institute DB
+        fullName: fullName || user.enrollmentOrEmail,
         enrollmentNumber: user.enrollmentOrEmail,
         computerCode: user.employeeOrComputerCode,
         sectionId: section.id,
@@ -105,3 +104,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
