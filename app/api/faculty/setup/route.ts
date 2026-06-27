@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
         where: {
           subBranchId: subBranch.id,
           sectionNumber: Number(ss.sectionNumber),
-          year: Number(ss.year ?? year),
+          year: Number(year),
         },
       });
       if (!section) {
