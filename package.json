@@ -10,13 +10,16 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "bullmq": "^5.79.1",
     "cloudinary": "^2.10.0",
+    "dotenv": "^17.4.2",
     "ioredis": "^5.11.1",
     "jose": "^6.2.3",
     "jsonwebtoken": "^9.0.3",
     "next": "14.2.35",
+    "pg": "^8.22.0",
     "react": "^18",
     "react-dom": "^18",
     "recharts": "^3.9.0"
@@ -24,6 +27,7 @@
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
+    "@types/pg": "^8.20.0",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",

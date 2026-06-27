@@ -86,6 +86,8 @@ export async function POST(request: NextRequest) {
       success: true,
       role: mappedRole,
       profileComplete,
+      fullName: instituteUser.fullName,
+      instituteEmail: instituteUser.instituteEmail ?? null,
     });
   } catch (error) {
     console.error("Login error:", error);
