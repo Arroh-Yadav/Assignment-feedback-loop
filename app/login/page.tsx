@@ -68,6 +68,8 @@ export default function LoginPage() {
 
       // Redirect based on role and profile completion
       if (!data.profileComplete) {
+        sessionStorage.setItem("afl_fullName", data.fullName ?? "");
+        sessionStorage.setItem("afl_instituteEmail", data.instituteEmail ?? "");
         router.push(`/${role}/setup`);
       } else {
         router.push(`/${role}/dashboard`);

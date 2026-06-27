@@ -24,8 +24,9 @@ export async function POST(request: NextRequest) {
       totalSections,
       sectionSubjects,
       year,
+      fullName,
+      instituteEmail,
     } = body;
-
     if (
       !branchCode ||
       !subBranchCode ||
@@ -80,9 +81,9 @@ export async function POST(request: NextRequest) {
     const faculty = await prisma.faculty.create({
       data: {
         userId: session.userId,
-        fullName: user.enrollmentOrEmail, // 🚩 known issue — replace with real name from institute DB
+        fullName: fullName || user.enrollmentOrEmail, // 🚩 known issue — replace with real name from institute DB
         employeeId: user.employeeOrComputerCode,
-        instituteEmail: user.enrollmentOrEmail, // 🚩 known issue — replace with real email from institute DB
+        instituteEmail: instituteEmail || user.enrollmentOrEmail, // 🚩 known issue — replace with real email from institute DB
         branchId: branch.id,
       },
     });

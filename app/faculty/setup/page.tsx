@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { BRANCHES, YEARS } from "@/lib/setupData";
 
@@ -14,6 +14,13 @@ interface SectionSubject {
 
 export default function FacultySetupPage() {
   const router = useRouter();
+  const [fullName, setFullName] = useState("");
+  const [instituteEmail, setInstituteEmail] = useState("");
+
+  useEffect(() => {
+    setFullName(sessionStorage.getItem("afl_fullName") ?? "");
+    setInstituteEmail(sessionStorage.getItem("afl_instituteEmail") ?? "");
+  }, []);
 
   const [branchCode, setBranchCode] = useState("");
   const [subBranchCode, setSubBranchCode] = useState("");
@@ -114,6 +121,8 @@ export default function FacultySetupPage() {
           totalSections: Number(totalSections),
           sectionSubjects,
           year,
+          fullName,
+          instituteEmail,
         }),
       });
       const data = await res.json();

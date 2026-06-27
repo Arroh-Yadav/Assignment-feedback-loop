@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { BRANCHES, YEARS, SEMESTERS_BY_YEAR, SECTIONS } from "@/lib/setupData";
 
@@ -8,6 +8,11 @@ type Step = 1 | 2 | 3;
 
 export default function StudentSetupPage() {
   const router = useRouter();
+  const [fullName, setFullName] = useState("");
+
+  useEffect(() => {
+    setFullName(sessionStorage.getItem("afl_fullName") ?? "");
+  }, []);
 
   const [branchCode, setBranchCode] = useState("");
   const [subBranchCode, setSubBranchCode] = useState("");
@@ -58,6 +63,7 @@ export default function StudentSetupPage() {
           sectionNumber,
           year,
           semester,
+          fullName,
         }),
       });
       const data = await res.json();
