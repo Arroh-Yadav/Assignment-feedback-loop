@@ -27,6 +27,7 @@ export async function POST(request: NextRequest) {
       fullName,
       instituteEmail,
     } = body;
+
     if (
       !branchCode ||
       !subBranchCode ||
@@ -77,13 +78,12 @@ export async function POST(request: NextRequest) {
     });
 
     // Create Faculty profile
-    // NOTE: fullName and instituteEmail are placeholders — fix before Phase 2
     const faculty = await prisma.faculty.create({
       data: {
         userId: session.userId,
-        fullName: fullName || user.enrollmentOrEmail, // 🚩 known issue — replace with real name from institute DB
+        fullName: fullName || user.enrollmentOrEmail,
         employeeId: user.employeeOrComputerCode,
-        instituteEmail: instituteEmail || user.enrollmentOrEmail, // 🚩 known issue — replace with real email from institute DB
+        instituteEmail: instituteEmail || user.enrollmentOrEmail,
         branchId: branch.id,
       },
     });
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
         where: {
           subBranchId: subBranch.id,
           sectionNumber: Number(ss.sectionNumber),
-          year: Number(year),
+          year: Number(ss.year ?? year),
         },
       });
       if (!section) {
@@ -126,3 +126,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
