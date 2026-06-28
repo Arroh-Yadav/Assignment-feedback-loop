@@ -241,7 +241,7 @@ Build POST /api/faculty/assignments/route.ts:
 
 ---
 
-### Agent Task 2.2 — Student Assignment View & Upload
+### Agent Task 2.2a — Student Assignment View & Upload
 
 **Prompt the agent:**
 ```
@@ -270,6 +270,44 @@ Build POST /api/student/submit/route.ts:
 **You review:** Upload works, locked after submit, status tracker shows ✅
 
 ---
+
+---
+
+### Agent Task 2.2b — Student Dashboard (Assignment List)
+
+**Prompt the agent:**
+```
+Build /app/student/dashboard/page.tsx
+
+Profile card at top: student name, enrollment number, branch,
+sub-branch, section number, year, semester.
+
+Two tabs:
+- Active: all ACTIVE assignments for student's section not yet submitted,
+  deadline in future. Each card shows subject, title, faculty name,
+  max marks, countdown timer (green → amber → red), Submit Now button
+  navigates to /student/assignment/{id}.
+- Submitted: assignments already submitted. Each card shows subject,
+  title, submitted date, status badge, View button, and View Feedback
+  button if status is GRADED.
+
+Empty states for both tabs.
+Logout button in header.
+Performance link at bottom → /student/performance
+
+Build GET /api/student/assignments/route.ts:
+- Fetch all ACTIVE assignments for student's sectionId
+- Fetch all submissions by this student
+- Return student profile info, assignments array, submissionMap
+  keyed by assignmentId
+```
+
+**Why added:** Students had no way to discover assignments without a direct
+URL. The dashboard was scaffolded in Task 1.1 but never explicitly tasked.
+Added retroactively as an oversight fix.
+
+**You review:** Dashboard shows assignments, tabs switch correctly,
+countdown timers color coded, Submit Now navigates to assignment page ✅
 
 ### Agent Task 2.3 — Faculty Submissions List
 
@@ -619,3 +657,4 @@ Build PATCH /api/notifications/{id}/read → mark as read
 | **Total** | **19 tasks** | **9–13 days** |
 
 > With Claude Code as your coding agent, this entire platform can be production-ready in under 2 weeks.
+
