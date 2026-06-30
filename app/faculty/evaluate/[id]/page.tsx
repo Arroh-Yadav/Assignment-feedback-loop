@@ -176,7 +176,11 @@ export default function EvaluatePage() {
       return;
     }
 
-    publish ? setPublishing(true) : setSaving(true);
+    if (publish) {
+      setPublishing(true);
+    } else {
+      setSaving(true);
+    }
 
     try {
       const res = await fetch("/api/faculty/evaluate", {
