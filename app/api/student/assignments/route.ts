@@ -46,7 +46,7 @@ export async function GET() {
 
     // Map submissions by assignmentId for quick lookup
     const submissionMap: Record<string, (typeof submissions)[0]> = {};
-    submissions.forEach((s) => {
+    submissions.forEach((s: (typeof submissions)[0]) => {
       submissionMap[s.assignmentId] = s;
     });
 
