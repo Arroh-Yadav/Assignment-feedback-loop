@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
 
     // Step 1 — Verify against institute DB (mock or real)
     const instituteDbUrl =
-      process.env.INSTITUTE_DB_API_URL ||
+      process.env.MOCK_DB_URL ||
       `https://assignment-feedback-loop-sb7n.vercel.app/api/mock-institute-db`;
 
     const instituteRes = await fetch(instituteDbUrl, {
