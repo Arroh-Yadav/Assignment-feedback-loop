@@ -8,7 +8,11 @@ export async function POST(request: NextRequest) {
     const { role, credentials } = body;
 
     // Step 1 — Verify against institute DB (mock or real)
-    const instituteRes = await fetch(`${process.env.INSTITUTE_DB_API_URL}`, {
+    const instituteDbUrl =
+      process.env.INSTITUTE_DB_API_URL ||
+      `https://assignment-feedback-loop-sb7n.vercel.app/api/mock-institute-db`;
+
+    const instituteRes = await fetch(instituteDbUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
