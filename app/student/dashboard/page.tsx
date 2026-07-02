@@ -71,8 +71,9 @@ export default function StudentDashboardPage() {
     Record<string, SubmissionInfo>
   >({});
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState;
-  "active" | "missed" | ("submitted" > "active");
+  const [activeTab, setActiveTab] = useState<"active" | "missed" | "submitted">(
+    "active",
+  );
 
   useEffect(() => {
     fetch("/api/student/assignments")
