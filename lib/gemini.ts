@@ -1,4 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/supabase";
 
 // ── Model ─────────────────────────────────────
@@ -191,14 +192,16 @@ export async function processSubmission(submissionId: string): Promise<void> {
         submissionId,
         extractedText: result.extracted_text,
         structuralAnalysis: result.structural_analysis,
-        feedbackItems: result.feedback_items,
+        feedbackItems:
+          result.feedback_items as unknown as Prisma.InputJsonValue,
         suggestedMarks: result.suggested_marks,
         modelUsed: MODEL_NAME,
       },
       update: {
         extractedText: result.extracted_text,
         structuralAnalysis: result.structural_analysis,
-        feedbackItems: result.feedback_items,
+        feedbackItems:
+          result.feedback_items as unknown as Prisma.InputJsonValue,
         suggestedMarks: result.suggested_marks,
         modelUsed: MODEL_NAME,
         generatedAt: new Date(),
