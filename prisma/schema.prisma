@@ -24,6 +24,7 @@ enum SubmissionStatus {
   SUBMITTED
   AI_PROCESSING
   AI_DONE
+  AI_ERROR
   UNDER_REVIEW
   GRADED
 }

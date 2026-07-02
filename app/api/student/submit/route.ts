@@ -3,6 +3,7 @@ import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/supabase";
 import { uploadSubmissionFile } from "@/lib/cloudinary";
 import { v4 as uuidv4 } from "uuid";
+import { addSubmissionJob } from "@/lib/queue";
 
 export async function POST(request: NextRequest) {
   try {
@@ -88,6 +89,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Save submission to DB
+    // Save submission to DB
     const submission = await prisma.submission.create({
       data: {
         id: submissionId,
@@ -99,6 +101,27 @@ export async function POST(request: NextRequest) {
         studentNote: studentNote?.trim() || null,
       },
     });
+
+    // Queue AI processing (fast, non-blocking) and reflect that immediately
+    // in status. The actual Gemini call happens when Upstash QStash next
+    // triggers /api/cron/process-queue (up to ~1 minute later).
+    try {
+      await addSubmissionJob(submission.id);
+      await prisma.submission.update({
+        where: { id: submission.id },
+        data: { status: "AI_PROCESSING" },
+      });
+    } catch (queueError) {
+      // Don't fail the whole submission if the queue is unreachable --
+      // the submission itself is saved and safe. It just won't get AI
+      // feedback until someone notices and re-triggers it. Left as
+      // SUBMITTED so faculty dashboard shows it as pending rather than
+      // silently stuck.
+      console.error(
+        `Failed to enqueue submission ${submission.id} for AI processing:`,
+        queueError,
+      );
+    }
 
     return NextResponse.json({
       success: true,
