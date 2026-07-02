@@ -71,7 +71,8 @@ export default function StudentDashboardPage() {
     Record<string, SubmissionInfo>
   >({});
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"active" | "submitted">("active");
+  const [activeTab, setActiveTab] = useState;
+  "active" | "missed" | ("submitted" > "active");
 
   useEffect(() => {
     fetch("/api/student/assignments")
@@ -90,9 +91,12 @@ export default function StudentDashboardPage() {
     router.push("/login");
   };
 
-  // Split assignments into active and submitted
+  // Split assignments into active, missed, and submitted
   const activeAssignments = assignments.filter(
     (a) => !submissionMap[a.id] && new Date(a.deadline) > new Date(),
+  );
+  const missedAssignments = assignments.filter(
+    (a) => !submissionMap[a.id] && new Date(a.deadline) <= new Date(),
   );
   const submittedAssignments = assignments.filter((a) => submissionMap[a.id]);
 
@@ -179,7 +183,7 @@ export default function StudentDashboardPage() {
             className="flex"
             style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
           >
-            {(["active", "submitted"] as const).map((tab) => (
+            {(["active", "missed", "submitted"] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -189,13 +193,25 @@ export default function StudentDashboardPage() {
                   backgroundColor: "transparent",
                 }}
               >
-                {tab === "active" ? "Active" : "Submitted"}
+                {tab === "active"
+                  ? "Active"
+                  : tab === "missed"
+                    ? "Missed"
+                    : "Submitted"}
                 {tab === "active" && activeAssignments.length > 0 && (
                   <span
                     className="ml-2 px-1.5 py-0.5 rounded-full text-xs"
                     style={{ backgroundColor: "#8B1A1A", color: "#fff" }}
                   >
                     {activeAssignments.length}
+                  </span>
+                )}
+                {tab === "missed" && missedAssignments.length > 0 && (
+                  <span
+                    className="ml-2 px-1.5 py-0.5 rounded-full text-xs"
+                    style={{ backgroundColor: "#6B7280", color: "#fff" }}
+                  >
+                    {missedAssignments.length}
                   </span>
                 )}
                 {activeTab === tab && (
@@ -276,6 +292,76 @@ export default function StudentDashboardPage() {
                         style={{ backgroundColor: "#8B1A1A" }}
                       >
                         Submit Now →
+                      </button>
+                    </div>
+                  ))
+                )}
+              </>
+            )}
+
+            {/* Missed Tab */}
+            {activeTab === "missed" && (
+              <>
+                {missedAssignments.length === 0 ? (
+                  <div className="py-12 flex flex-col items-center gap-2">
+                    <span className="text-4xl">✅</span>
+                    <p className="text-white/40 text-sm">
+                      No missed assignments.
+                    </p>
+                  </div>
+                ) : (
+                  missedAssignments.map((a) => (
+                    <div
+                      key={a.id}
+                      className="rounded-xl p-4 space-y-3"
+                      style={{
+                        backgroundColor: "rgba(255,255,255,0.02)",
+                        border: "1px solid rgba(255,255,255,0.06)",
+                        opacity: 0.75,
+                      }}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1">
+                          <p className="text-white/50 text-xs">
+                            {a.subjectName}
+                          </p>
+                          <p className="text-white text-sm font-medium mt-0.5">
+                            {a.title}
+                          </p>
+                          <p className="text-white/30 text-xs mt-0.5">
+                            by {a.faculty.fullName}
+                          </p>
+                        </div>
+                        <div
+                          className="px-2.5 py-1 rounded-full text-xs font-medium text-white flex-shrink-0"
+                          style={{ backgroundColor: "#6B7280" }}
+                        >
+                          Closed
+                        </div>
+                      </div>
+
+                      <p className="text-xs" style={{ color: "#9CA3AF" }}>
+                        ⏰ Deadline passed —{" "}
+                        {new Date(a.deadline).toLocaleDateString("en-IN", {
+                          day: "numeric",
+                          month: "short",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </p>
+
+                      <button
+                        onClick={() =>
+                          router.push(`/student/assignment/${a.id}`)
+                        }
+                        className="w-full py-2.5 rounded-lg text-sm"
+                        style={{
+                          backgroundColor: "rgba(255,255,255,0.05)",
+                          color: "rgba(255,255,255,0.5)",
+                          border: "1px solid rgba(255,255,255,0.12)",
+                        }}
+                      >
+                        View Details →
                       </button>
                     </div>
                   ))
