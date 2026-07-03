@@ -165,7 +165,7 @@ One row per submission, generated automatically after upload.
 | `structural_analysis` | JSONB | Step-by-step method check |
 | `feedback_items` | JSONB | Array of `{type, message}` objects |
 | `suggested_marks` | INT | Gemini's mark suggestion |
-| `model_used` | VARCHAR | e.g. `gemini-1.5-pro` |
+| `model_used` | VARCHAR | e.g. `gemini-3.5-flash` |
 | `generated_at` | TIMESTAMP | |
 
 ### `feedback_items` JSON structure
