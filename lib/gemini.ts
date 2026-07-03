@@ -49,9 +49,12 @@ function buildEvaluationPrompt(assignment: {
   subjectName: string;
   maxMarks: number;
   description: string;
+  hasReferenceFile: boolean;
 }): string {
   // Prompt template per TRD.md section 4 ("Evaluation Prompt Template"),
-  // adapted to the live Assignment fields (subjectName, maxMarks, description).
+  // adapted to the live Assignment fields (subjectName, maxMarks, description),
+  // plus an added reference-material comparison step when the faculty has
+  // uploaded a question paper / answer key (assignment.referenceFileUrl).
   return `
 You are an engineering assignment evaluator for IPS Academy, Indore.
 
@@ -60,7 +63,21 @@ Subject: ${assignment.subjectName}
 Max Marks: ${assignment.maxMarks}
 Evaluation Criteria: ${assignment.description}
 
-The student has submitted handwritten pages. Analyze each page and:
+${
+  assignment.hasReferenceFile
+    ? `You are given two sets of material, clearly labeled below:
+1. Reference material (the question paper and/or expected answers)
+2. The student's submitted handwritten answer sheet
+
+First, identify the exact questions asked (and expected answers/approach, if
+shown) from the reference material. Then evaluate the student's submission
+specifically against those questions: check whether each question was
+attempted, whether the answer matches the expected approach/result, and
+explicitly flag any questions that were left unanswered.`
+    : `The student has submitted handwritten pages.`
+}
+
+Analyze the submission and:
 1. Extract all written text, formulas, and diagram labels
 2. Check if the solution follows the correct method/structure
 3. Identify correct steps, errors, and missing parts
@@ -112,27 +129,35 @@ function parseGeminiResponse(rawText: string): GeminiEvaluationResult {
 /**
  * Calls Gemini once with the given prompt + images, parses the JSON result.
  * Throws on failure (caller decides whether to retry).
+ *
+ * If referenceImages is non-empty, they're sent first with a clear label,
+ * followed by a label + the student's submission images -- so Gemini can
+ * tell the two sets apart unambiguously.
  */
 async function callGemini(
   prompt: string,
-  images: { base64: string; mimeType: string }[],
+  submissionImages: { base64: string; mimeType: string }[],
+  referenceImages: { base64: string; mimeType: string }[] = [],
 ): Promise<GeminiEvaluationResult> {
+  const toInlinePart = (img: { base64: string; mimeType: string }) => ({
+    inlineData: { mimeType: img.mimeType, data: img.base64 },
+  });
+
+  const parts: (
+    | { text: string }
+    | { inlineData: { mimeType: string; data: string } }
+  )[] = [{ text: prompt }];
+
+  if (referenceImages.length > 0) {
+    parts.push({ text: "Reference material (question paper / answer key):" });
+    parts.push(...referenceImages.map(toInlinePart));
+    parts.push({ text: "Student's submitted answer sheet:" });
+  }
+  parts.push(...submissionImages.map(toInlinePart));
+
   const response = await ai.models.generateContent({
     model: MODEL_NAME,
-    contents: [
-      {
-        role: "user",
-        parts: [
-          { text: prompt },
-          ...images.map((img) => ({
-            inlineData: {
-              mimeType: img.mimeType,
-              data: img.base64,
-            },
-          })),
-        ],
-      },
-    ],
+    contents: [{ role: "user", parts }],
   });
 
   const rawText = response.text ?? "";
@@ -168,22 +193,37 @@ export async function processSubmission(submissionId: string): Promise<void> {
       submission.fileUrls.map((url: string) => fetchImageAsBase64(url)),
     );
 
+    const referenceFileUrl = submission.assignment.referenceFileUrl;
+    let referenceImages: { base64: string; mimeType: string }[] = [];
+    if (referenceFileUrl) {
+      try {
+        referenceImages = [await fetchImageAsBase64(referenceFileUrl)];
+      } catch (refError) {
+        console.warn(
+          `Failed to fetch reference file for submission ${submissionId}, ` +
+            `proceeding with text-only evaluation criteria:`,
+          refError,
+        );
+      }
+    }
+
     const prompt = buildEvaluationPrompt({
       title: submission.assignment.title,
       subjectName: submission.assignment.subjectName,
       maxMarks: submission.assignment.maxMarks,
       description: submission.assignment.description,
+      hasReferenceFile: referenceImages.length > 0,
     });
 
     let result: GeminiEvaluationResult;
     try {
-      result = await callGemini(prompt, images);
+      result = await callGemini(prompt, images, referenceImages);
     } catch (firstError) {
       console.warn(
         `Gemini call failed for submission ${submissionId}, retrying once:`,
         firstError,
       );
-      result = await callGemini(prompt, images);
+      result = await callGemini(prompt, images, referenceImages);
     }
 
     await prisma.aIFeedback.upsert({
