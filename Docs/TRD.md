@@ -9,7 +9,7 @@
 Frontend          Backend / API        AI Engine         Database & Storage
 ──────────        ─────────────        ─────────         ──────────────────
 Next.js 14        Next.js API Routes   Gemini API        PostgreSQL
-App Router        (same project)       gemini-1.5-pro    Supabase (host)
+App Router        (same project)       gemini-3.5-flash  Supabase (host)
 Tailwind CSS      Middleware Auth      Google AI SDK     Cloudinary (files)
 React 18          Prisma ORM                             Upstash Redis (queue)
 ```
@@ -145,19 +145,19 @@ export function middleware(request: NextRequest) {
 ## 4. AI Engine — Gemini API
 
 ### Model
-`gemini-1.5-pro` — supports vision (images) + text in one call.
+`gemini-3.5-flash` — current GA multimodal model, supports vision (images) +
+text in one call. (`gemini-1.5-pro` is fully discontinued as of mid-2026 —
+see Implementation-Plan.md Phase 3 deviations note.)
 
 ### Client Setup
 
 ```typescript
 // lib/gemini.ts
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { GoogleGenAI } from '@google/genai'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! })
 
-export const geminiModel = genAI.getGenerativeModel({
-  model: 'gemini-1.5-pro'
-})
+// used per-call as: ai.models.generateContent({ model: 'gemini-3.5-flash', ... })
 ```
 
 ### AI Processing Pipeline
@@ -416,7 +416,7 @@ Production deploy → afl.ipsacademy.org live
     "react": "^18.0.0",
     "tailwindcss": "^3.4.0",
     "@prisma/client": "^5.0.0",
-    "@google/generative-ai": "^0.2.0",
+    "@google/genai": "^2.10.0",
     "cloudinary": "^2.0.0",
     "bullmq": "^4.0.0",
     "ioredis": "^5.0.0",

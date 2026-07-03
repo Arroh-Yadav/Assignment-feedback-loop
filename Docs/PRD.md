@@ -108,11 +108,14 @@ IPS Academy
 
 | What AI Does | How |
 |---|---|
-| Read handwritten text & math | Gemini 1.5 Pro Vision |
-| Parse diagrams & block drawings | Gemini 1.5 Pro Vision |
-| Check solution structure & method | Gemini 1.5 Pro Reasoning |
-| Generate step-by-step feedback | Gemini 1.5 Pro Language |
+| Read handwritten text & math | Gemini 3.5 Flash Vision |
+| Parse diagrams & block drawings | Gemini 3.5 Flash Vision |
+| Check solution structure & method | Gemini 3.5 Flash Reasoning |
+| Generate step-by-step feedback | Gemini 3.5 Flash Language |
 | Suggest marks based on rubric | Gemini + Faculty criteria |
+
+> Note: these are all handled by a single model call to `gemini-3.5-flash`
+> (multimodal — text + vision in one request), not separate named products.
 
 ---
 

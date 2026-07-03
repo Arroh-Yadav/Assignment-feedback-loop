@@ -35,7 +35,9 @@ DATABASE_URL=
 **Used for:** Reading handwritten assignment pages and generating evaluation feedback.
 
 Every time a student submits an assignment, the pages are sent to
-Gemini 1.5 Pro via the Google AI SDK. Gemini reads the handwriting,
+Gemini 3.5 Flash via the `@google/genai` SDK (Google's current
+multimodal GA model — `gemini-1.5-pro` and its old `@google/generative-ai`
+SDK are both fully discontinued as of mid-2026). Gemini reads the handwriting,
 extracts text and formulas, checks the solution structure against
 the assignment rubric, generates step-by-step feedback items
 (correct / error / warning), and suggests a mark out of the total.
