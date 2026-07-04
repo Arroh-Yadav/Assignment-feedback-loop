@@ -112,7 +112,7 @@ export async function GET(request: NextRequest) {
       .map(([message, count]) => ({ message, count }));
 
     // Student-wise marks matrix (published evaluations only; null = not graded yet)
-    const studentMap: Record
+    const studentMap: Record<
       string,
       {
         studentId: string;
