@@ -45,14 +45,18 @@ export default function AdminBranchesPage() {
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [toggleError, setToggleError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetch("/api/admin/branches")
+  const loadBranches = () => {
+    return fetch("/api/admin/branches")
       .then((r) => r.json())
       .then((d) => {
         setBranches(d.branches ?? []);
         setLoading(false);
       })
       .catch(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    loadBranches();
   }, []);
 
   const toggleExpand = (
@@ -85,30 +89,9 @@ export default function AdminBranchesPage() {
         return;
       }
 
-      // Update local tree state without a full refetch
-      setBranches((prev) =>
-        prev.map((b) => {
-          if (type === "branch" && b.id === id) {
-            return { ...b, isActive: data.isActive };
-          }
-          return {
-            ...b,
-            subBranches: b.subBranches.map((sb) => {
-              if (type === "subbranch" && sb.id === id) {
-                return { ...sb, isActive: data.isActive };
-              }
-              return {
-                ...sb,
-                sections: sb.sections.map((sec) =>
-                  type === "section" && sec.id === id
-                    ? { ...sec, isActive: data.isActive }
-                    : sec,
-                ),
-              };
-            }),
-          };
-        }),
-      );
+      // Refetch the full tree so counts and status always reflect the DB
+      // exactly — no manual state surgery, no risk of drifting out of sync.
+      await loadBranches();
     } catch {
       setToggleError("Something went wrong. Please try again.");
     } finally {
