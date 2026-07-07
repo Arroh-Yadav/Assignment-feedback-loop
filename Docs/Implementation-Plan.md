@@ -559,6 +559,14 @@ Fetch from GET /api/faculty/analytics?sectionId={id}
 
 ### Agent Task 4.3 — Admin Panel
 
+**Status:** In progress — split into three sub-tasks (a: Users, b: Branches,
+c: Sync), same pattern as Task 2.2a/2.2b, since each screen has its own
+API route and can be built/reviewed independently.
+
+---
+
+### Agent Task 4.3a — Admin Users Screen
+
 **Prompt the agent:**
 ```
 Build /app/admin/users/page.tsx:
@@ -567,13 +575,43 @@ Build /app/admin/users/page.tsx:
 - Search input (filter by name or ID)
 - Toggle active/inactive per user (PATCH /api/admin/users/{id})
 - Filter tabs: All | Students | Faculty | Inactive
+```
 
+**Notes on implementation:**
+- `{id}` in the PATCH route is the `User.id` (not a Student/Faculty profile
+  id) — this is what both the `Student` and `Faculty` models key off via
+  `userId`, and it's the field `isActive` actually lives on.
+- Search and filter tabs are handled client-side after a single fetch,
+  consistent with the approach used in 4.1/4.2 — dataset size doesn't
+  warrant server-side pagination yet.
+- Added a safety guard not in the original prompt: an admin cannot
+  deactivate their own account via this screen (PATCH route blocks it,
+  returns a clear error). Without this, an admin could accidentally lock
+  themselves out.
+
+**You review:** User toggle works ✅
+
+---
+
+### Agent Task 4.3b — Admin Branches Screen
+
+**Prompt the agent:**
+```
 Build /app/admin/branches/page.tsx:
 - Tree view: Branch → Sub-Branch → Sections
 - Each node has enable/disable toggle
 - Show faculty count and student count per section
 - Expand/collapse per branch
+```
 
+**You review:** Branch tree renders, toggles work, counts correct ✅
+
+---
+
+### Agent Task 4.3c — Admin Sync Screen
+
+**Prompt the agent:**
+```
 Build /app/admin/sync/page.tsx:
 - "Sync Now" button → POST /api/admin/sync
 - Shows last sync timestamp
@@ -581,7 +619,8 @@ Build /app/admin/sync/page.tsx:
 - Table of flagged mismatches for manual review
 ```
 
-**You review:** User toggle works, branch tree renders, sync logs show ✅
+**You review:** Sync runs, last-sync timestamp persists across reloads,
+mismatches table populates correctly ✅
 
 ---
 
