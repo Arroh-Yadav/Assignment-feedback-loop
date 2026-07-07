@@ -46,7 +46,7 @@ export default function AdminBranchesPage() {
   const [toggleError, setToggleError] = useState<string | null>(null);
 
   const loadBranches = () => {
-    return fetch("/api/admin/branches")
+    return fetch("/api/admin/branches", { cache: "no-store" })
       .then((r) => r.json())
       .then((d) => {
         setBranches(d.branches ?? []);
