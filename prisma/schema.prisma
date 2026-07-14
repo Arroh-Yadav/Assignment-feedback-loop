@@ -191,3 +191,12 @@ model Annotation {
   content      String
   createdAt    DateTime       @default(now())
 }
+
+model SyncLog {
+  id            String   @id @default(uuid())
+  runAt         DateTime @default(now())
+  matchedCount  Int
+  newCount      Int
+  mismatchCount Int
+  mismatches    Json
+}
