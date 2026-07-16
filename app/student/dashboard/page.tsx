@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import NotificationBell from "@/components/NotificationBell";
 
 interface Assignment {
   id: string;
@@ -138,6 +139,7 @@ export default function StudentDashboardPage() {
               </h1>
               <p className="text-white/60 text-xs">IPS Academy, Indore</p>
             </div>
+            <NotificationBell />
             <button
               onClick={handleLogout}
               className="text-white/60 text-xs hover:text-white transition-colors px-3 py-1.5 rounded-lg"

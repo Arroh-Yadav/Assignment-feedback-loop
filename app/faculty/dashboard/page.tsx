@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import NotificationBell from "@/components/NotificationBell";
 import {
   BarChart,
   Bar,
@@ -208,6 +209,7 @@ export default function FacultyDashboardPage() {
               </h1>
               <p className="text-white/60 text-xs">IPS Academy, Indore</p>
             </div>
+            <NotificationBell />
             <button
               onClick={handleLogout}
               className="text-white/60 text-xs hover:text-white transition-colors px-3 py-1.5 rounded-lg"

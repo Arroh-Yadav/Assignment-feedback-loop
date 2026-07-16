@@ -181,7 +181,9 @@ async function callGemini(
 export async function processSubmission(submissionId: string): Promise<void> {
   const submission = await prisma.submission.findUnique({
     where: { id: submissionId },
-    include: { assignment: true },
+    include: {
+      assignment: { include: { faculty: { select: { userId: true } } } },
+    },
   });
 
   if (!submission) {
@@ -252,6 +254,25 @@ export async function processSubmission(submissionId: string): Promise<void> {
       where: { id: submissionId },
       data: { status: "AI_DONE" },
     });
+
+    // Notify the faculty that AI feedback is ready for review.
+    // Wrapped separately: a notification failure must never flip this
+    // submission to AI_ERROR when AI processing itself succeeded.
+    try {
+      await prisma.notification.create({
+        data: {
+          userId: submission.assignment.faculty.userId,
+          title: "Submission Ready to Evaluate",
+          message: `AI feedback is ready for a submission on "${submission.assignment.title}".`,
+          linkUrl: `/faculty/evaluate/${submissionId}`,
+        },
+      });
+    } catch (notifError) {
+      console.error(
+        `Failed to create AI_DONE notification for submission ${submissionId} (non-fatal):`,
+        notifError,
+      );
+    }
   } catch (error) {
     console.error(
       `AI processing failed for submission ${submissionId}:`,

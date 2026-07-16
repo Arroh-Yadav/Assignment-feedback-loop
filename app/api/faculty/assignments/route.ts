@@ -90,6 +90,34 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Notify all students in this section when the assignment goes live.
+    // Wrapped separately: a notification failure must never cause this
+    // request to report an error after the assignment was already
+    // successfully created.
+    if (status === "ACTIVE") {
+      try {
+        const sectionStudents = await prisma.student.findMany({
+          where: { sectionId },
+          select: { userId: true },
+        });
+        if (sectionStudents.length > 0) {
+          await prisma.notification.createMany({
+            data: sectionStudents.map((s) => ({
+              userId: s.userId,
+              title: "New Assignment Posted",
+              message: `A new assignment "${assignment.title}" has been posted for ${subjectName.trim()}.`,
+              linkUrl: `/student/assignment/${assignment.id}`,
+            })),
+          });
+        }
+      } catch (notifError) {
+        console.error(
+          `Failed to create new-assignment notifications for assignment ${assignment.id} (non-fatal):`,
+          notifError,
+        );
+      }
+    }
+
     return NextResponse.json({ success: true, assignmentId: assignment.id });
   } catch (error) {
     console.error("Assignment creation error:", error);

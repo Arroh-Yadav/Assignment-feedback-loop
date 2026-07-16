@@ -33,7 +33,10 @@ export async function POST(request: NextRequest) {
     const submission = await prisma.submission.findUnique({
       where: { id: submissionId },
       include: {
-        assignment: { select: { maxMarks: true, facultyId: true } },
+        assignment: {
+          select: { maxMarks: true, facultyId: true, title: true },
+        },
+        student: { select: { userId: true } },
         evaluation: true,
       },
     });
@@ -88,6 +91,26 @@ export async function POST(request: NextRequest) {
         where: { id: submissionId },
         data: { status: "GRADED" },
       });
+
+      // Notify the student that their submission has been graded.
+      // Wrapped separately: a notification failure must never cause this
+      // request to report an error after the evaluation was already
+      // successfully published and committed.
+      try {
+        await prisma.notification.create({
+          data: {
+            userId: submission.student.userId,
+            title: "Assignment Graded",
+            message: `Your submission for "${submission.assignment.title}" has been graded.`,
+            linkUrl: `/student/feedback/${submissionId}`,
+          },
+        });
+      } catch (notifError) {
+        console.error(
+          `Failed to create graded notification for submission ${submissionId} (non-fatal):`,
+          notifError,
+        );
+      }
     } else {
       await prisma.submission.update({
         where: { id: submissionId },
