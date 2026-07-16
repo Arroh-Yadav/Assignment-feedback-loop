@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 
 interface NotificationItem {
@@ -27,7 +28,14 @@ export default function NotificationBell() {
   const router = useRouter();
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [open, setOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ top: 0, right: 0 });
+  const [mounted, setMounted] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const loadNotifications = useCallback(() => {
     fetch("/api/notifications", { cache: "no-store" })
@@ -42,13 +50,28 @@ export default function NotificationBell() {
     return () => clearInterval(interval);
   }, [loadNotifications]);
 
-  // Close dropdown on outside click
+  const handleOpen = () => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setPosition({
+        top: rect.bottom + window.scrollY + 8,
+        right: window.innerWidth - rect.right,
+      });
+    }
+    setOpen((v) => !v);
+  };
+
+  // Close dropdown on outside click (checks both the button and the
+  // portal-rendered dropdown, since they're no longer DOM siblings)
   useEffect(() => {
     if (!open) return;
     const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
       if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
+        buttonRef.current &&
+        !buttonRef.current.contains(target) &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(target)
       ) {
         setOpen(false);
       }
@@ -71,9 +94,10 @@ export default function NotificationBell() {
   };
 
   return (
-    <div className="relative" ref={containerRef}>
+    <>
       <button
-        onClick={() => setOpen((v) => !v)}
+        ref={buttonRef}
+        onClick={handleOpen}
         className="relative w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
         style={{ border: "1px solid rgba(255,255,255,0.2)" }}
         aria-label="Notifications"
@@ -89,59 +113,66 @@ export default function NotificationBell() {
         )}
       </button>
 
-      {open && (
-        <div
-          className="absolute right-0 mt-2 w-80 max-w-[90vw] rounded-2xl overflow-hidden shadow-2xl z-50"
-          style={{
-            backgroundColor: "#0f0f23",
-            border: "1px solid rgba(255,255,255,0.1)",
-          }}
-        >
+      {mounted &&
+        open &&
+        createPortal(
           <div
-            className="px-4 py-3"
-            style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
+            ref={dropdownRef}
+            className="fixed w-80 max-w-[90vw] rounded-2xl overflow-hidden shadow-2xl"
+            style={{
+              top: position.top,
+              right: position.right,
+              backgroundColor: "#0f0f23",
+              border: "1px solid rgba(255,255,255,0.1)",
+              zIndex: 9999,
+            }}
           >
-            <p className="text-white text-sm font-medium">Notifications</p>
-          </div>
+            <div
+              className="px-4 py-3"
+              style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
+            >
+              <p className="text-white text-sm font-medium">Notifications</p>
+            </div>
 
-          <div className="max-h-96 overflow-y-auto">
-            {notifications.length === 0 ? (
-              <div className="py-10 flex flex-col items-center gap-2">
-                <span className="text-3xl">🔕</span>
-                <p className="text-white/40 text-xs">
-                  You&apos;re all caught up.
-                </p>
-              </div>
-            ) : (
-              <div
-                className="divide-y"
-                style={{ borderColor: "rgba(255,255,255,0.06)" }}
-              >
-                {notifications.map((n) => (
-                  <button
-                    key={n.id}
-                    onClick={() => handleNotificationClick(n)}
-                    className="w-full text-left px-4 py-3 transition-colors"
-                    style={{ backgroundColor: "rgba(255,255,255,0.02)" }}
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <p className="text-white text-xs font-medium">
-                        {n.title}
+            <div className="max-h-96 overflow-y-auto">
+              {notifications.length === 0 ? (
+                <div className="py-10 flex flex-col items-center gap-2">
+                  <span className="text-3xl">🔕</span>
+                  <p className="text-white/40 text-xs">
+                    You&apos;re all caught up.
+                  </p>
+                </div>
+              ) : (
+                <div
+                  className="divide-y"
+                  style={{ borderColor: "rgba(255,255,255,0.06)" }}
+                >
+                  {notifications.map((n) => (
+                    <button
+                      key={n.id}
+                      onClick={() => handleNotificationClick(n)}
+                      className="w-full text-left px-4 py-3 transition-colors"
+                      style={{ backgroundColor: "rgba(255,255,255,0.02)" }}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="text-white text-xs font-medium">
+                          {n.title}
+                        </p>
+                        <span className="text-white/30 text-[10px] flex-shrink-0 mt-0.5">
+                          {timeAgo(n.createdAt)}
+                        </span>
+                      </div>
+                      <p className="text-white/50 text-xs mt-1 leading-relaxed">
+                        {n.message}
                       </p>
-                      <span className="text-white/30 text-[10px] flex-shrink-0 mt-0.5">
-                        {timeAgo(n.createdAt)}
-                      </span>
-                    </div>
-                    <p className="text-white/50 text-xs mt-1 leading-relaxed">
-                      {n.message}
-                    </p>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>,
+          document.body,
+        )}
+    </>
   );
 }
