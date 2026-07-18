@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/supabase";
+import { getSignedFileUrl } from "@/lib/cloudinary";
 
 export async function GET(
   request: NextRequest,
@@ -55,7 +56,15 @@ export async function GET(
       },
     });
 
-    return NextResponse.json({ assignment, submission });
+    return NextResponse.json({
+      assignment: {
+        ...assignment,
+        referenceFileUrl: assignment.referenceFileUrl
+          ? getSignedFileUrl(assignment.referenceFileUrl)
+          : null,
+      },
+      submission,
+    });
   } catch (error) {
     console.error("Assignment fetch error:", error);
     return NextResponse.json(

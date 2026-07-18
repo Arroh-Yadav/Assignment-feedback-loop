@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/supabase";
+import { getSignedFileUrl } from "@/lib/cloudinary";
 
 export async function GET(
   request: NextRequest,
@@ -56,7 +57,12 @@ export async function GET(
       return NextResponse.json({ error: "Access denied." }, { status: 403 });
     }
 
-    return NextResponse.json({ submission });
+    return NextResponse.json({
+      submission: {
+        ...submission,
+        fileUrls: submission.fileUrls.map((f) => getSignedFileUrl(f)),
+      },
+    });
   } catch (error) {
     console.error("Submission fetch error:", error);
     return NextResponse.json(

@@ -1,3 +1,4 @@
+import { getSignedFileUrl } from "@/lib/cloudinary";
 import { GoogleGenAI } from "@google/genai";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/supabase";
@@ -192,14 +193,18 @@ export async function processSubmission(submissionId: string): Promise<void> {
 
   try {
     const images = await Promise.all(
-      submission.fileUrls.map((url: string) => fetchImageAsBase64(url)),
+      submission.fileUrls.map((url: string) =>
+        fetchImageAsBase64(getSignedFileUrl(url)),
+      ),
     );
 
     const referenceFileUrl = submission.assignment.referenceFileUrl;
     let referenceImages: { base64: string; mimeType: string }[] = [];
     if (referenceFileUrl) {
       try {
-        referenceImages = [await fetchImageAsBase64(referenceFileUrl)];
+        referenceImages = [
+          await fetchImageAsBase64(getSignedFileUrl(referenceFileUrl)),
+        ];
       } catch (refError) {
         console.warn(
           `Failed to fetch reference file for submission ${submissionId}, ` +
