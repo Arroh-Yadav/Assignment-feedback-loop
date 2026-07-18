@@ -34,11 +34,11 @@ function cleanupIfNeeded() {
   const now = Date.now();
   if (now - lastCleanup < WINDOW_MS) return;
   lastCleanup = now;
-  for (const [key, entry] of store.entries()) {
+  Array.from(store.entries()).forEach(([key, entry]) => {
     if (now - entry.windowStart > WINDOW_MS) {
       store.delete(key);
     }
-  }
+  });
 }
 
 export function checkRateLimit(key: string): {
