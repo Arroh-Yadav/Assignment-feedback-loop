@@ -275,7 +275,7 @@ export default function AdminBranchesPage() {
                               sb.sections.map((sec) => (
                                 <div
                                   key={sec.id}
-                                  className="px-4 py-2.5 pl-16 flex items-center gap-3"
+                                  className="px-4 py-2.5 pl-12 flex items-center gap-3"
                                   style={{
                                     borderTop:
                                       "1px solid rgba(255,255,255,0.03)",
