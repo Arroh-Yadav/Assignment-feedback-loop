@@ -40,6 +40,11 @@
 | **Institute Email** | `@ipsacademy.org` verified email |
 | **Verification** | Matched against institute's cloud HR/faculty database |
 
+### Admin Login
+There is no separate admin credential system — an admin account is simply
+a faculty-database entry flagged with `designation: "Admin"`, and goes
+through the identical verification path as faculty login above.
+
 > **No open registration.** The system checks every login attempt against the institute's existing cloud database. Only pre-existing, institute-verified individuals can access the platform.
 
 ---
@@ -71,6 +76,9 @@ IPS Academy
 - **Section** → Faculty inputs count → system creates Section 1, 2, 3...
 - **Sections** are numbered (1, 2, 3 etc.)
 - Standard **B.E. / B.Tech — 4 Years / 8 Semesters**
+- Admin can enable/disable any Branch, Sub-Branch, or Section independently
+  (does not cascade — disabling a Branch does not automatically disable
+  its Sub-Branches or Sections)
 
 ---
 
@@ -85,22 +93,34 @@ IPS Academy
 - Annotate digital copies (highlight, comment, draw)
 - AI-assisted evaluation with one click
 - Override or edit AI feedback before publishing
-- View class-level performance analytics
+- View section-level performance analytics (average marks per assignment,
+  top recurring AI-flagged errors, student-wise marks table, section
+  average trend over time)
 
 ### 5.2 Student Side
 - Register with branch + section + enrollment number
 - See all assignments posted by their branch faculty
 - Upload handwritten assignment (photo or PDF, multiple pages)
-- Track submission status (Submitted / Under Review / Graded)
+- Track submission status (Submitted / AI Processing / Under Review / Graded)
 - View AI + faculty feedback with marks breakdown
-- See personal performance trend over time
+- See personal performance trend over time, compared against an
+  anonymized section average
+- Receive in-app notifications when an assignment is graded or a new
+  assignment is posted
 
 ### 5.3 Admin Side
-- Manage all faculty and student accounts
-- View institution-wide analytics
-- Enable/disable branches or sections
-- Monitor submission and grading activity
-- Trigger institute database sync
+- Manage all faculty and student accounts (search, filter by role/status,
+  activate/deactivate)
+- View quick platform stats (total students, faculty, inactive accounts)
+- Enable/disable branches, sub-branches, or sections individually
+- View faculty/student counts per section
+- Trigger a comparison against the institute's database (matched / new /
+  flagged mismatch counts, with a review table for discrepancies)
+
+> Institution-wide analytics (e.g. cross-branch submission rates, grading
+> turnaround time, AI vs. faculty score comparison) is **not currently
+> built**. A placeholder route exists but isn't linked from anywhere in
+> the app. See Implementation-Plan.md for status.
 
 ---
 
@@ -119,26 +139,43 @@ IPS Academy
 
 ---
 
-## 7. Must-Have Features (MVP)
+## 7. Must-Have Features (MVP) — Status: Delivered
 
-- [ ] Student & Faculty registration with branch/section
-- [ ] Faculty can create branch + sections dynamically
-- [ ] Assignment creation by faculty (per subject, per section)
-- [ ] Multi-page handwritten upload by students
-- [ ] AI reading + feedback generation (Gemini)
-- [ ] Faculty annotation + approval of feedback
-- [ ] Student feedback view with marks
-- [ ] Basic performance dashboard
+- [x] Student & Faculty registration with branch/section
+- [x] Faculty can create branch + sections dynamically
+- [x] Assignment creation by faculty (per subject, per section)
+- [x] Multi-page handwritten upload by students
+- [x] AI reading + feedback generation (Gemini)
+- [x] Faculty annotation + approval of feedback
+- [x] Student feedback view with marks
+- [x] Basic performance dashboard
+
+## 7a. Delivered Beyond Original MVP Scope
+
+These weren't part of the original MVP list above, but were built as
+part of Phase 4 and are live in production:
+
+- [x] Student performance dashboard with anonymized section-average comparison
+- [x] Faculty section analytics (avg marks, top AI-flagged errors, trend, student-wise table)
+- [x] Admin panel — user management, branch/section tree management, institute DB sync
+- [x] In-app notifications (graded, new assignment, ready-to-evaluate)
+- [x] Cloudinary signed/expiring file URLs (private submissions, not public)
+- [x] Rate limiting on login/logout
+- [x] Row Level Security enabled on all database tables
 
 ---
 
-## 8. Nice-to-Have (Phase 2)
+## 8. Nice-to-Have (Future — Not Yet Built)
+
+> Renamed from the original "Phase 2" label to avoid confusion with
+> this project's actual Phase 2 (Core Assignment Loop), which is
+> already complete. These are aspirational future ideas, not scheduled work.
 
 - [ ] Plagiarism detection between submissions
 - [ ] Export feedback as PDF for students
-- [ ] Email/SMS notifications on grading
+- [ ] Email/SMS notifications on grading (in-app notifications are live; email/SMS are not)
 - [ ] Bulk submission download for faculty
-- [ ] Institution-level report for HOD/Principal
+- [ ] Institution-level report for HOD/Principal (true cross-branch analytics)
 
 ---
 
