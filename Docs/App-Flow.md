@@ -9,6 +9,9 @@
 - If credentials don't match → **Access Denied**, no registration allowed
 - First login triggers a **one-time profile setup** for both students and faculty
 - After setup, direct dashboard access on every subsequent login
+- Admin has no separate credential system — an admin account is a
+  faculty-database entry flagged `designation: "Admin"`, verified
+  through the same login path as faculty
 
 ---
 
@@ -40,13 +43,15 @@ START
   - Active Assignments (pending submission)
   - Submitted Assignments (awaiting feedback)
   - Graded Assignments (feedback received)
-  - Personal Performance Trend
+  - Notification bell (unread count badge)
         │
         ▼
   [Open an Assignment]
   - View assignment title, subject, deadline, max marks
   - View faculty instructions
   - Download reference sheet (if faculty attached one)
+  - Note: a new assignment published to your section triggers an
+    in-app notification automatically
         │
         ▼
   [Submit Assignment]
@@ -58,8 +63,8 @@ START
         ▼
   [Submission Tracking]
   Status shown as:
-  ● Submitted — Under AI Processing
-  ● AI Review Done — Awaiting Faculty Approval
+  ● Submitted — queued for AI processing
+  ● AI Processing Done — Awaiting Faculty Approval
   ● Graded — Feedback Available
         │
         ▼
@@ -69,12 +74,14 @@ START
   - Faculty annotations on digital copy
   - Faculty comments
   - Highlighted errors on original uploaded sheet
+  - Note: publishing this evaluation is what triggers the
+    "Assignment Graded" notification you received
         │
         ▼
   [Performance Dashboard]
   - Subject-wise marks trend (graph)
   - Semester progress
-  - Comparison vs class average (anonymous)
+  - Comparison vs section average (anonymous)
 END
 ```
 
@@ -108,10 +115,10 @@ START
         ▼
   [Faculty Dashboard]
   Shows:
-  - My Assignments (active, closed, draft)
-  - Pending Evaluations (submissions waiting)
-  - Recently Graded
-  - Section-wise performance overview
+  - Profile card (name, branch, section/subject chips)
+  - My Assignments — Active / Draft tabs (with count badges)
+  - Analytics tab (see Section Analytics below)
+  - Notification bell (unread count badge)
         │
         ▼
   [Create New Assignment]
@@ -121,13 +128,16 @@ START
   - Set: Max Marks + Deadline
   - Define: Evaluation Criteria / Rubric (optional)
   - Attach: Reference sheet or question paper (optional)
-  - Publish → Students of that section can now see it
+  - Publish → Students of that section can now see it, and each
+    receives a "New Assignment Posted" notification automatically
         │
         ▼
   [View Submissions]
   - List of all students who submitted
   - Status per student (AI processed / pending)
   - Click any student → open their submission
+  - Note: when AI processing finishes for a submission, you receive
+    a "Submission Ready to Evaluate" notification automatically
         │
         ▼
   [Evaluate a Submission]
@@ -145,16 +155,17 @@ START
   │     - Add personal remarks
   │
   └── [Assign Final Marks]
-        - Enter marks per criteria
+        - Enter marks
         - Overall marks
-        - Approve & Publish → Student notified
+        - Approve & Publish → student notified automatically
         │
         ▼
   [Section Analytics]
-  - Average marks per assignment
-  - Common errors across class
-  - Student-wise performance table
-  - Subject-wise trend graphs
+  - Section selector (if you teach more than one section)
+  - Average marks per assignment (bar chart)
+  - Section average trend over time (line chart)
+  - Top 5 most common AI-flagged errors
+  - Student-wise marks table
 END
 ```
 
@@ -167,38 +178,44 @@ START
   │
   ▼
 [Login Screen]
-  Admin credentials (separate admin account)
+  Same institute-DB check as Faculty — an admin account is simply a
+  faculty-database entry flagged designation: "Admin"
         │
         ▼
   [Admin Dashboard]
-  - Institution-wide activity summary
-  - Total submissions today / this week
-  - Pending evaluations across all branches
-  - Active faculty + students count
+  - Quick stats: Total Students / Total Faculty / Total Inactive
+  - Three nav cards: Manage Users / Branches & Sections / Institute Sync
+  - Notification bell (unread count badge)
         │
         ▼
   ├── [Manage Branches]
-  │     - View all branches + sub-branches + sections
-  │     - Enable / Disable any branch or section
-  │     - View faculty mapped to each section
+  │     - Expandable tree: Branch → Sub-Branch → Section
+  │     - Enable / Disable any branch, sub-branch, or section
+  │       individually (does not cascade to children)
+  │     - View student + faculty count at each level
   │
   ├── [Manage Users]
-  │     - View all students + faculty
-  │     - Deactivate accounts if needed
-  │     - View login activity
+  │     - View all students + faculty in one searchable table
+  │     - Filter: All / Students / Faculty / Inactive
+  │     - Activate / Deactivate any account (cannot deactivate
+  │       your own admin account)
+  │     - View last login timestamp per user
   │
-  ├── [Platform Analytics]
-  │     - Branch-wise submission rates
-  │     - Grading turnaround time
-  │     - AI vs Faculty score comparison
-  │     - Most active subjects
-  │
-  └── [Database Sync]
-        - Trigger sync with IPS Academy cloud database
-        - View last sync timestamp
-        - Flag mismatches between platform and institute DB
+  └── [Institute Sync]
+        - Trigger a comparison against the institute's mock database
+        - View last sync timestamp (persists across reloads)
+        - See Matched / New / Flagged counts
+        - Review table of flagged records, categorized as:
+          new (not yet onboarded), mismatch (data differs), or
+          orphaned (exists in our system but not in institute records)
 END
 ```
+
+> **Not currently built:** a platform-wide analytics view (cross-branch
+> submission rates, grading turnaround time, AI vs. faculty score
+> comparison) was originally planned but does not exist yet. A
+> placeholder route exists at `/admin/analytics` but isn't linked from
+> anywhere in the app.
 
 ---
 
@@ -209,16 +226,18 @@ END
 | Login | ✅ | ✅ | ✅ |
 | One-Time Profile Setup | ✅ | ✅ | ❌ |
 | Dashboard | ✅ | ✅ | ✅ |
+| Notifications (bell) | ✅ | ✅ | ✅ |
 | Assignment List | ✅ | ✅ | ❌ |
 | Assignment Detail | ✅ | ✅ | ❌ |
 | Upload Submission | ✅ | ❌ | ❌ |
 | Submission Status | ✅ | ❌ | ❌ |
 | View Feedback | ✅ | ❌ | ❌ |
+| Performance Dashboard | ✅ | ❌ | ❌ |
 | Create Assignment | ❌ | ✅ | ❌ |
 | Evaluate Submission | ❌ | ✅ | ❌ |
 | Annotate Digital Copy | ❌ | ✅ | ❌ |
 | Section Analytics | ❌ | ✅ | ❌ |
 | Manage Users | ❌ | ❌ | ✅ |
 | Manage Branches | ❌ | ❌ | ✅ |
-| Platform Analytics | ❌ | ❌ | ✅ |
-| Database Sync | ❌ | ❌ | ✅ |
+| Institute Sync | ❌ | ❌ | ✅ |
+| Platform Analytics | ❌ | ❌ | ❌ (not built — see note above) |
