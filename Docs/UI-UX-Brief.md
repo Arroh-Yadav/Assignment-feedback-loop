@@ -7,18 +7,22 @@
 
 Derived from IPS Academy IES official website (`ies.ipsacademy.org`).
 
+The entire application is **dark-themed throughout** — not just the
+login screen. Every dashboard (student, faculty, admin) and every
+sub-page uses the same dark surface system below.
+
 | Role | Color | Usage |
 |---|---|---|
 | Primary / Brand | `#8B1A1A` (Deep Crimson) | Top bars, buttons, active states, badges |
-| Background Dark | `#1a1a2e` | Login screen background |
-| Surface Light | `#ffffff` | Cards, panels (light mode) |
-| Success | `#D1FAE5` / `#065F46` | Graded status, correct feedback |
-| Warning | `#FEF3C7` / `#92400E` | Pending, partial feedback |
-| Error | `#FEE2E2` / `#991B1B` | Wrong step, missed criteria |
-| Info | `#DBEAFE` / `#1E40AF` | In-review status |
-| Text Primary | `#111827` | Headings, values |
-| Text Secondary | `#6B7280` | Labels, metadata |
-| Border | `#E5E7EB` | Card borders, dividers |
+| Background | `#1a1a2e` | Page background — every screen, not just login |
+| Surface | `#0f0f23` | Cards, panels, table backgrounds |
+| Success | `#10B981` on `rgba(16,185,129,0.15)` | Graded status, correct feedback, active toggles |
+| Warning | `#F59E0B` on `rgba(245,158,11,0.15)` | Pending, partial feedback |
+| Error | `#EF4444` on `rgba(239,68,68,0.15)` | Wrong step, missed criteria, deactivate actions |
+| Info | `#3B82F6` on `rgba(59,130,246,0.15)` | In-review status, student role badge |
+| Text Primary | `#ffffff` (white) | Headings, values |
+| Text Secondary | `rgba(255,255,255,0.4–0.6)` (white, reduced opacity) | Labels, metadata |
+| Border / Divider | `rgba(255,255,255,0.06–0.15)` | Card borders, dividers, table row separators |
 
 ---
 
@@ -31,17 +35,18 @@ Derived from IPS Academy IES official website (`ies.ipsacademy.org`).
 | Body / labels | 13px | 400 | Descriptions, metadata |
 | Micro | 11–12px | 400 | Badges, timestamps, hints |
 
-Font family: System sans-serif stack (`Inter`, `Segoe UI`, `Helvetica Neue`)
+Font family: **Geist Sans / Geist Mono** (self-hosted via `next/font/local`,
+`app/fonts/GeistVF.woff` + `GeistMonoVF.woff`) — not a generic system stack.
 
 ---
 
 ## Design Principles
 
 - Crimson (`#8B1A1A`) used only for top navigation, primary buttons, and active selections — never overused
-- All status states use semantic colors (green = graded, amber = pending, blue = in review, red = error)
+- All status states use semantic colors (green = graded/active, amber = pending, blue = in review, red = error/inactive)
 - Faculty annotation tools are compact and inline — no popup panels
-- Mobile-friendly: single-column layout on phones, split-panel only on desktop/tablet
-- Dark login screen, light dashboard — creates a clear "you're in" moment after login
+- Mobile-friendly: single-column layout (`max-w-2xl mx-auto`) on every screen size; the evaluation screen specifically switches to a split two-panel layout on desktop
+- Dark theme throughout, including login — no light-mode surfaces exist anywhere in the app
 - No unnecessary decorative elements — functional and clean
 
 ---
@@ -49,19 +54,17 @@ Font family: System sans-serif stack (`Inter`, `Segoe UI`, `Helvetica Neue`)
 ## Screen-by-Screen Layout
 
 ### 1. Login Screen
-- Dark background (`#1a1a2e`)
+- Dark background (`#1a1a2e`), dark card surface (`#0f0f23`)
 - Crimson header bar with IPS Academy logo + AFL name
 - Three role tabs: **Student / Faculty / Admin**
 - Fields change dynamically based on selected role:
   - Student → Computer Code + Enrollment Number
   - Faculty → Employee ID + Institute Email
-  - Admin → Admin ID + Password
-- Lock note at bottom: "Access restricted to IPS Academy registered individuals only"
+  - Admin → same institute-DB check as Faculty, flagged by `designation: "Admin"` — no separate admin credential system
 - Single Sign In button in crimson
 
 ### 2. Student Dashboard
-- Crimson top bar: student name, branch, section, semester on left; year + enrollment on right
-- Three stat cards: Pending / In Review / Graded (counts)
+- Crimson top bar: platform name + IPS Academy, Indore, with logout and notification bell
 - Assignment list grouped by status:
   - Active (amber icon)
   - Under Review (blue icon)
@@ -69,10 +72,11 @@ Font family: System sans-serif stack (`Inter`, `Segoe UI`, `Helvetica Neue`)
 - Each card shows: title, subject, deadline/submitted date, status badge
 
 ### 3. Faculty Dashboard
-- Same crimson top bar with faculty name + branch
-- Stat cards: Active Assignments / Pending Evaluations / Graded this week
-- Assignment list with section filter tabs
-- Quick "Create Assignment" button prominently placed
+- Same crimson top bar with logout and notification bell
+- Faculty profile card: name, email, branch, employee ID, section/subject chips
+- Prominent "Create Assignment" button
+- Three tabs: **Active** / **Drafts** / **Analytics** (each tab shows a count badge where applicable)
+- Analytics tab includes a section selector (if faculty teaches multiple sections), average-marks bar chart, section-average trend line chart, top 5 AI-flagged errors, and a student-wise marks table
 
 ### 4. Faculty — Create Assignment
 - Single-page form, clean vertical layout
@@ -95,14 +99,15 @@ Font family: System sans-serif stack (`Inter`, `Segoe UI`, `Helvetica Neue`)
 - Left panel: student's handwritten pages
   - Page navigator (1 of N)
   - Annotation toolbar: Highlight / Comment / Draw
-  - Annotations render as numbered dots on the page
+  - Annotations render as numbered dots on the page, positioned by
+    percentage coordinates (scales correctly at any screen size)
 - Right panel: AI feedback + evaluation
   - AI label with green dot + "Generated by {model name pulled from AIFeedback.modelUsed, e.g. Gemini 3.5 Flash}"
   - Feedback cards: green (correct), red (error), amber (warning)
   - AI suggested marks pre-filled
   - Faculty remarks textarea
   - Final marks input
-  - Approve & Publish button (crimson)
+  - Approve & Publish button (crimson) — triggers an in-app notification to the student
 
 ### 7. Student — Submission View
 - Upload area with drag-and-drop support
@@ -119,16 +124,31 @@ Font family: System sans-serif stack (`Inter`, `Segoe UI`, `Helvetica Neue`)
 - Submission timeline: Submitted → AI Reviewed → Graded
 
 ### 9. Performance Dashboard (Student)
-- Line chart: marks trend per subject
-- Bar chart: assignment scores this semester
-- Class average shown as dotted reference line
+- Line chart: marks trend per subject, with a dotted section-average reference line
+- Bar chart: assignment scores this semester, with a dotted overall-average reference line
+- Semester progress bar (% of assignments graded)
+- Subject-wise section average summary
 - Full assignment history table with feedback links
 
 ### 10. Admin Dashboard
-- 4-stat summary row: Total Students / Faculty / Submissions Today / Pending Evaluations
-- Branch-wise table with submission rates
-- Database sync status card (last synced timestamp)
-- Quick links to Users / Branches / Analytics
+- Crimson top bar with logout and notification bell
+- 3-stat summary row: Total Students / Total Faculty / Total Inactive
+- Three nav cards: **Manage Users** / **Branches & Sections** / **Institute Sync**
+
+### 11. Admin — Manage Users
+- Search input (by name or ID)
+- Filter tabs: All / Students / Faculty / Inactive, each with a count badge
+- Table: Name | ID | Branch | Role | Last Login | Status, with an Activate/Deactivate action per row
+
+### 12. Admin — Branches & Sections
+- Expandable tree: Branch → Sub-Branch → Section
+- Each level shows a student/faculty count and its own independent Active/Inactive toggle
+- Toggling a parent does not cascade to its children
+
+### 13. Admin — Institute Sync
+- "Sync Now" button, last-sync timestamp (persists across reloads)
+- Matched / New / Flagged count summary
+- Table of flagged records for manual review, categorized (new, mismatch, orphaned)
 
 ---
 
@@ -137,26 +157,25 @@ Font family: System sans-serif stack (`Inter`, `Segoe UI`, `Helvetica Neue`)
 ### Buttons
 | Type | Style |
 |---|---|
-| Primary | Crimson fill `#8B1A1A`, white text, rounded-md |
-| Secondary | White fill, crimson border + text |
-| Danger | Red fill `#DC2626`, white text |
-| Ghost | Transparent, gray text, border on hover |
+| Primary | Crimson fill `#8B1A1A`, white text, rounded-xl/2xl |
+| Secondary | Transparent fill, white border (`rgba(255,255,255,0.2)`), white text |
+| Danger | Red tint background `rgba(239,68,68,0.15)`, red text `#EF4444` |
+| Ghost | Transparent, reduced-opacity white text |
 
 ### Status Badges
 | Status | Background | Text |
 |---|---|---|
-| Pending / Due soon | `#FEF3C7` | `#92400E` |
-| Submitted | `#DBEAFE` | `#1E40AF` |
-| AI Done | `#EDE9FE` | `#5B21B6` |
-| Graded | `#D1FAE5` | `#065F46` |
-| Overdue | `#FEE2E2` | `#991B1B` |
+| Pending / Due soon | `rgba(245,158,11,0.15)` | `#F59E0B` |
+| Submitted / In review | `rgba(59,130,246,0.15)` | `#3B82F6` |
+| Active / Graded / Matched | `rgba(16,185,129,0.15)` | `#10B981` |
+| Inactive / Error / Overdue | `rgba(239,68,68,0.15)` | `#EF4444` |
 
 ### Cards
-- White background
-- 1px border `#E5E7EB`
-- Border radius: 12px
-- Padding: 16px
-- Subtle shadow on hover
+- Dark surface background `#0f0f23`
+- 1px border `rgba(255,255,255,0.06–0.1)`
+- Border radius: 16–24px (`rounded-xl`/`rounded-2xl`)
+- Padding: 16–20px
+- No hover shadow — flat dark UI throughout
 
 ---
 
@@ -164,6 +183,9 @@ Font family: System sans-serif stack (`Inter`, `Segoe UI`, `Helvetica Neue`)
 
 | Screen | Layout |
 |---|---|
-| Mobile (< 768px) | Single column, stacked panels, bottom nav |
-| Tablet (768–1024px) | Two-column cards, condensed sidebar |
-| Desktop (> 1024px) | Full split-panel evaluation, sidebar nav |
+| Mobile (< 768px) | Single column, stacked panels — same `max-w-2xl mx-auto` container as desktop, just full-width |
+| Tablet (768–1024px) | Same single-column container, more visible padding either side |
+| Desktop (> 1024px) | Same single-column container for all dashboards; only the evaluation screen (Section 6) switches to a genuine split two-panel layout |
+
+> No bottom navigation bar exists on mobile — navigation is via the top
+> header and in-page buttons/links on every screen size.
